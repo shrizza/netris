@@ -396,13 +396,17 @@ ExtFunc int main(int argc, char **argv)
 {
 	int initConn = 0, waitConn = 0, ch, done = 0;
 	char *hostStr = NULL, *portStr = NULL;
+	char *userName;
 	MyEvent event;
 
 	standoutEnable = colorEnable = 1;
 	stepDownInterval = DEFAULT_INTERVAL;
 	MapKeys(DEFAULT_KEYS);
-	while ((ch = getopt(argc, argv, "hHRs:r:Fk:c:woDSCp:i:")) != -1)
+	while ((ch = getopt(argc, argv, "u:hHRs:r:Fk:c:woDSCp:i:")) != -1)
 		switch (ch) {
+			case 'u':
+				userName = optarg;
+				break;
 			case 'c':
 				initConn = 1;
 				hostStr = optarg;
@@ -545,10 +549,10 @@ ExtFunc int main(int argc, char **argv)
 				}
 			}
 			{
-				char *userName;
 				int len, i;
 
-				userName = getenv("LOGNAME");
+				if (!userName || !userName[0])
+					userName = getenv("LOGNAME");
 				if (!userName || !userName[0])
 					userName = getenv("USER");
 				if (!userName || !userName[0])
