@@ -68,7 +68,7 @@ typedef long netint4;
 #define DEFAULT_KEYS "jJklL mspf^ln "
 
 /* Protocol versions */
-#define MAJOR_VERSION		1	
+#define MAJOR_VERSION		2
 #define PROTOCOL_VERSION	3
 #define ROBOT_VERSION		1
 
