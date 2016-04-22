@@ -38,6 +38,8 @@ static EventGenRec *nextGen = &alarmGen;
 
 static struct timeval baseTimeval;
 
+static unsigned long ctx = 0;
+
 ExtFunc void InitUtil(void)
 {
 	if (initSeed)
@@ -146,12 +148,22 @@ ExtFunc void Rules(void)
 ExtFunc void SRandom(int seed)
 {
 	initSeed = seed;
-	srand(seed);
+	ctx = seed;
 }
 
 ExtFunc int Random(int min, int max1)
 {
-	return rand() % (max1 - min) + min;
+	/* Taken from FreeBSD - http://svnweb.freebsd.org/base/head/lib/libc/stdlib/rand.c */
+	long hi, lo, x;
+	int rnd;
+	hi = ctx / 127773;
+	lo = ctx % 127773;
+	x = 16807 * lo - 2836 * hi;
+	if (x < 0)
+		x += 0x7fffffff;
+	ctx = x;
+	rnd = x - 1;
+	return rnd % (max1 - min) + min;
 }
 
 ExtFunc int MyRead(int fd, void *data, int len)
