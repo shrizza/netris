@@ -90,6 +90,10 @@ typedef long netint4;
 #define EM_robot			000010
 #define EM_any				000777
 
+/* For the random piece generator */
+#define BAG_SIZE            4
+#define PIECE_TRIES         10
+
 typedef enum _GameType { GT_onePlayer, GT_classicTwo, GT_len } GameType;
 typedef enum _BlockTypeA { BT_none, BT_white, BT_blue, BT_magenta,
 							BT_cyan, BT_yellow, BT_green, BT_red,
@@ -186,6 +190,8 @@ EXT int myLinesCleared;
 EXT int enemyLinesCleared;
 EXT int myTotalLinesCleared;
 EXT int enemyTotalLinesCleared;
+
+EXT int bag[BAG_SIZE];
 
 #include "proto.h"
 

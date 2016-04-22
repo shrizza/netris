@@ -152,20 +152,38 @@ ExtFunc				ShapeDrawFunc func, void *data)
 	return 0;
 }
 
-ExtFunc Shape *ChooseOption(ShapeOption *options)
+int BagContains(int piece)
 {
 	int i;
-	float total = 0, val;
-
-	for (i = 0; options[i].shape; ++i)
-		total += options[i].weight;
-	val = Random(0, 32767) / 32768.0 * total;
-	for (i = 0; options[i].shape; ++i) {
-		val -= options[i].weight;
-		if (val < 0)
-			return options[i].shape;
+	for (i = 0; i < BAG_SIZE; i++) {
+		if (bag[i] == piece) {
+			return 1;
+		}
 	}
-	return options[0].shape;
+	return 0;
+}
+
+void UpdateBag(int piece)
+{
+	int i;
+	for (i = 1; i < BAG_SIZE; i++) {
+		bag[i] = bag[i - 1];
+	}
+	bag[0] = piece;
+}
+
+ExtFunc Shape *ChooseOption(ShapeOption *options)
+{
+	int i, piece = 0;
+	for (i = 0; i < PIECE_TRIES; i++) {
+		piece = Random(0, 7);
+		if (BagContains(piece) == 0) {
+			UpdateBag(piece);
+			return options[piece].shape;
+		}
+	}
+	/* We tried real hard. Just return the last try, but don't update the bag. */
+	return options[piece].shape;
 }
 
 ExtFunc short ShapeToNetNum(Shape *shape)

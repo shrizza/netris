@@ -1,0 +1,13 @@
+*.o
+*.dSYM
+
+.depend
+Makefile
+
+config.h
+proto.h
+proto.chg
+version.c
+
+/netris
+/sr

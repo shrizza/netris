@@ -36,8 +36,6 @@ static EventGenRec alarmGen =
 		{ &alarmGen, 0, FT_read, -1, AlarmGenFunc, EM_alarm };
 static EventGenRec *nextGen = &alarmGen;
 
-static int myRandSeed = 1;
-
 static struct timeval baseTimeval;
 
 ExtFunc void InitUtil(void)
@@ -148,13 +146,12 @@ ExtFunc void Rules(void)
 ExtFunc void SRandom(int seed)
 {
 	initSeed = seed;
-	myRandSeed = seed % 31751 + 1;
+	srand(seed);
 }
 
 ExtFunc int Random(int min, int max1)
 {
-	myRandSeed = (myRandSeed * 31751 + 15437) % 32767;
-	return myRandSeed % (max1 - min) + min;
+	return rand() % (max1 - min) + min;
 }
 
 ExtFunc int MyRead(int fd, void *data, int len)
