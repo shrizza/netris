@@ -182,7 +182,7 @@ ExtFunc Shape *ChooseOption(ShapeOption *options)
 			return options[piece].shape;
 		}
 	}
-	/* We tried real hard. Just return the last try, but don't update the bag. */
+	UpdateBag(piece);
 	return options[piece].shape;
 }
 

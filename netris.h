@@ -92,7 +92,7 @@ typedef long netint4;
 
 /* For the random piece generator */
 #define BAG_SIZE            4
-#define PIECE_TRIES         10
+#define PIECE_TRIES         4
 
 typedef enum _GameType { GT_onePlayer, GT_classicTwo, GT_len } GameType;
 typedef enum _BlockTypeA { BT_none, BT_white, BT_blue, BT_magenta,
