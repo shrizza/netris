@@ -28,11 +28,11 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 
-enum { KT_left, KT_full_left, KT_rotate, KT_right, KT_full_right, KT_drop, KT_down,
+enum { KT_left, KT_full_left, KT_rotateCCW, KT_rotateCW, KT_right, KT_full_right, KT_drop, KT_down,
 	KT_toggleSpy, KT_pause, KT_faster, KT_redraw, KT_new, KT_numKeys };
 
 static char *keyNames[KT_numKeys+1] = {
-	"Left", "FullLeft","Rotate", "Right", "FullRight", "Drop", "Down", "ToggleSpy", "Pause",
+	"Left", "FullLeft","RotateCCW", "RotateCW", "Right", "FullRight", "Drop", "Down", "ToggleSpy", "Pause",
 	"Faster", "Redraw", "New", NULL };
 
 static char *gameNames[GT_len] = { "OnePlayer", "ClassicTwo" };
@@ -204,9 +204,13 @@ ExtFunc void OneGame(int scr, int scr2)
 							}
 							break;
 						}
-						case KT_rotate:
-							if (RotatePiece(scr) && spied)
-								SendPacket(NP_rotate, 0, NULL);
+						case KT_rotateCCW:
+							if (RotatePiece(scr, 1) && spied)
+								SendPacket(NP_rotateCCW, 0, NULL);
+							break;
+						case KT_rotateCW:
+							if (RotatePiece(scr, 0) && spied)
+								SendPacket(NP_rotateCW, 0, NULL);
 							break;
 						case KT_down:
 							if (MovePiece(scr, -1, 0) && spied)
@@ -313,8 +317,11 @@ ExtFunc void OneGame(int scr, int scr2)
 						case NP_right:
 							MovePiece(scr2, 0, 1);
 							break;
-						case NP_rotate:
-							RotatePiece(scr2);
+						case NP_rotateCCW:
+							RotatePiece(scr2, 1);
+							break;
+						case NP_rotateCW:
+							RotatePiece(scr2, 0);
 							break;
 						case NP_drop:
 							DropPiece(scr2);

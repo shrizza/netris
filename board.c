@@ -173,14 +173,14 @@ ExtFunc int MovePiece(int scr, int deltaY, int deltaX)
 	return result;
 }
 
-ExtFunc int RotatePiece(int scr)
+ExtFunc int RotatePiece(int scr, int ccw)
 {
 	int result;
 
 	EraseShape(curShape[scr], scr, curY[scr], curX[scr]);
-	result = ShapeFits(curShape[scr]->rotateTo, scr, curY[scr], curX[scr]);
+	result = ShapeFits(ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW, scr, curY[scr], curX[scr]);
 	if (result)
-		curShape[scr] = curShape[scr]->rotateTo;
+		curShape[scr] = ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW;
 	PlotShape(curShape[scr], scr, curY[scr], curX[scr], 1);
 	return result;
 }

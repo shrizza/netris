@@ -65,7 +65,7 @@ typedef long netint4;
 
 #define DEFAULT_PORT 9284	/* Very arbitrary */
 
-#define DEFAULT_KEYS "jJklL mspf^ln "
+#define DEFAULT_KEYS "jJkKlL mspf^ln "
 
 /* Protocol versions */
 #define MAJOR_VERSION		2
@@ -105,7 +105,7 @@ typedef enum _MyEventType { E_none, E_alarm, E_key, E_net,
 							E_lostConn, E_robot, E_lostRobot } MyEventType;
 typedef enum _NetPacketType { NP_endConn, NP_giveJunk, NP_newPiece,
 							NP_down, NP_left, NP_right,
-							NP_rotate, NP_drop, NP_clear,
+							NP_rotateCCW, NP_rotateCW, NP_drop, NP_clear,
 							NP_insertJunk, NP_startConn,
 							NP_userName, NP_pause, NP_version,
 							NP_byeBye } NetPacketType;
@@ -141,7 +141,8 @@ typedef struct _EventGenRec {
 } EventGenRec;
 
 typedef struct _Shape {
-	struct _Shape *rotateTo;
+	struct _Shape *rotateToCCW;
+	struct _Shape *rotateToCW;
 	int initY, initX, mirrored;
 	Dir initDir;
 	BlockType type;

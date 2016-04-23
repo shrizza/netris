@@ -28,21 +28,25 @@
 #define PreDecl(name, dir) \
 	static Shape ShapeName(name, dir)
 
-#define StdShape(name, cmdName, mirror, type, realDir, dir, nextDir) \
-	static Shape ShapeName(name, dir) = { &ShapeName(name, nextDir), \
+#define StdShape(name, cmdName, mirror, type, realDir, dir, nextDirCCW, nextDirCW) \
+	static Shape ShapeName(name, dir) = { \
+		&ShapeName(name, nextDirCCW), \
+		&ShapeName(name, nextDirCW), \
 		0, 0, mirror, D_ ## realDir, type, cmds_ ## cmdName }
 
 #define FourWayDecl(name, cmdName, mirror, type) \
 	PreDecl(name, down); \
-	StdShape(name, cmdName, mirror, type, left, left, down); \
-	StdShape(name, cmdName, mirror, type, up, up, left); \
-	StdShape(name, cmdName, mirror, type, right, right, up); \
-	StdShape(name, cmdName, mirror, type, down, down, right)
+	PreDecl(name, up); \
+	PreDecl(name, right); \
+	StdShape(name, cmdName, mirror, type, left, left, down, up); \
+	StdShape(name, cmdName, mirror, type, up, up, left, right); \
+	StdShape(name, cmdName, mirror, type, right, right, up, down); \
+	StdShape(name, cmdName, mirror, type, down, down, right, left)
 
 #define TwoWayDecl(name, cmdName, mirror, type) \
 	PreDecl(name, vert); \
-	StdShape(name, cmdName, mirror, type, right, horiz, vert); \
-	StdShape(name, cmdName, mirror, type, down, vert, horiz)
+	StdShape(name, cmdName, mirror, type, right, horiz, vert, vert); \
+	StdShape(name, cmdName, mirror, type, down, vert, horiz, horiz)
 
 static Cmd cmds_long[] = { C_back, C_plot, C_forw, C_plot, C_forw, C_plot,
 	C_forw, C_plot, C_end };
@@ -50,7 +54,7 @@ TwoWayDecl(long, long, 0, BT_blue);
 
 static Cmd cmds_square[] = { C_plot, C_forw, C_left, C_plot, C_forw, C_left,
 	C_plot, C_forw, C_left, C_plot, C_end };
-static Shape shape_square = { &shape_square, 0, 0, D_up, 0, BT_magenta,
+static Shape shape_square = { &shape_square, &shape_square, 0, 0, D_up, 0, BT_magenta,
 	cmds_square };
 
 static Cmd cmds_l[] = { C_right, C_back, C_plot, C_forw, C_plot, C_forw,
