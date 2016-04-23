@@ -73,6 +73,7 @@ ExtFunc void Usage(void)
 	  "  -w		Wait for connection\n"
 	  "  -c <host>	Initiate connection\n"
 	  "  -p <port>	Set port number (default is %d)\n"
+	  "  -u <username> Set username displayed during multiplayer matches\n"
 	  "  -k <keys>	Remap keys.  The argument is a prefix of the string\n"
 	  "	  	containing the keys in order: left, full left, rotate, right, \n"
 	  "		full right, drop, down-faster, toggle-spying, pause, faster, "
