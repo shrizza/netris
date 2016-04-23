@@ -68,7 +68,7 @@ typedef long netint4;
 #define DEFAULT_KEYS "jJklL mspf^ln "
 
 /* Protocol versions */
-#define MAJOR_VERSION		1	
+#define MAJOR_VERSION		2
 #define PROTOCOL_VERSION	3
 #define ROBOT_VERSION		1
 
@@ -89,6 +89,10 @@ typedef long netint4;
 #define EM_net				000004
 #define EM_robot			000010
 #define EM_any				000777
+
+/* For the random piece generator */
+#define BAG_SIZE            4
+#define PIECE_TRIES         4
 
 typedef enum _GameType { GT_onePlayer, GT_classicTwo, GT_len } GameType;
 typedef enum _BlockTypeA { BT_none, BT_white, BT_blue, BT_magenta,
@@ -187,6 +191,8 @@ EXT int enemyLinesCleared;
 EXT int blockCount;
 EXT int myTotalLinesCleared;
 EXT int enemyTotalLinesCleared;
+
+EXT int bag[BAG_SIZE];
 
 #include "proto.h"
 
