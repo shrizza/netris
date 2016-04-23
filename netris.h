@@ -184,6 +184,7 @@ extern char *version_string;
 
 EXT int myLinesCleared;
 EXT int enemyLinesCleared;
+EXT int blockCount;
 EXT int myTotalLinesCleared;
 EXT int enemyTotalLinesCleared;
 

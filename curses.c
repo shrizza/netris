@@ -265,17 +265,26 @@ ExtFunc void PlotUnderline(int scr, int x, int flag)
 
 ExtFunc void ShowDisplayInfo(void)
 {
+	UpdateEnemyLines();
+	UpdateMyLinesCleared();
+	UpdateWinLoss();
+	UpdateGameState();
+	UpdateSeed();
+	UpdateSpeed();
+	UpdateCount();
+	UpdateRobot();
+}
+
+ExtFunc void UpdateEnemyLines(void)
+{
 	if (game == GT_classicTwo) {
 		move(statusYPos - 5, statusXPos);
 		printw("Enemy lines: %3d/%4d", enemyLinesCleared, enemyTotalLinesCleared);
 	}
-	move(statusYPos - 4, statusXPos);
-	printw("My lines:    %3d/%4d", myLinesCleared, myTotalLinesCleared);
-	move(statusYPos - 3, statusXPos);
-	printw("Won:  %3d", won);
-	move(statusYPos - 2, statusXPos);
-	printw("Lost: %3d", lost);
+}
 
+ExtFunc void UpdateGameState(void)
+{
 	move(statusYPos - 1, statusXPos);
 	switch(gameState) {
 	case STATE_WAIT_CONNECTION:
@@ -287,13 +296,10 @@ ExtFunc void ShowDisplayInfo(void)
 	default:
 		addstr("                             ");
 	}
+}
 
-	move(statusYPos - 9, statusXPos);
-	printw("Seed: %d", initSeed);
-	clrtoeol();
-	move(statusYPos - 8, statusXPos);
-	printw("Speed: %dms", speed / 1000);
-	clrtoeol();
+ExtFunc void UpdateRobot(void)
+{
 	if (robotEnable) {
 		move(statusYPos - 7, statusXPos);
 		if (fairRobot)
@@ -310,6 +316,41 @@ ExtFunc void ShowDisplayInfo(void)
 			addstr("The opponent is a robot");
 		clrtoeol();
 	}
+}
+
+ExtFunc void UpdateMyLinesCleared(void)
+{
+	move(statusYPos - 4, statusXPos);
+	printw("My lines:    %3d/%4d", myLinesCleared, myTotalLinesCleared);
+}
+
+ExtFunc void UpdateSeed(void)
+{
+	move(statusYPos - 12, statusXPos);
+	printw("Seed: %d", initSeed);
+	clrtoeol();
+}
+
+ExtFunc void UpdateSpeed(void)
+{
+	move(statusYPos - 11, statusXPos);
+	printw("Speed: %dms", speed / 1000);
+	clrtoeol();
+}
+
+ExtFunc void UpdateWinLoss(void)
+{
+	move(statusYPos - 3, statusXPos);
+	printw("Won:  %3d", won);
+	move(statusYPos - 2, statusXPos);
+	printw("Lost: %3d", lost);
+}
+
+ExtFunc void UpdateCount(void)
+{
+	move(statusYPos - 9, statusXPos);
+	printw("Count: %d", blockCount);
+	clrtoeol();
 }
 
 ExtFunc void UpdateOpponentDisplay(void)

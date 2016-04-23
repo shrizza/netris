@@ -104,6 +104,7 @@ ExtFunc void OneGame(int scr, int scr2)
 	int key;
 	char *p, *cmd;
 
+	blockCount = 0;
 	myLinesCleared = enemyLinesCleared = 0;
 	speed = stepDownInterval;
 	ResetBaseTime();
@@ -238,7 +239,7 @@ ExtFunc void OneGame(int scr, int scr2)
 								break;
 							speed = speed * 0.8;
 							SetITimer(speed, SetITimer(0, 0));
-							ShowDisplayInfo();
+							UpdateSpeed();
 							changed = 1;
 							break;
 						case KT_redraw:
@@ -371,8 +372,10 @@ ExtFunc void OneGame(int scr, int scr2)
 		FreezePiece(scr);
 		myLinesCleared += linesCleared = ClearFullLines(scr);
 		myTotalLinesCleared += linesCleared;
+		blockCount += 1 + linesCleared;
+		UpdateCount();
 		if (linesCleared) {
-			ShowDisplayInfo();
+			UpdateMyLinesCleared();
 			RefreshScreen();
 		}
 		if (linesCleared > 0 && spied)
@@ -591,7 +594,8 @@ ExtFunc int main(int argc, char **argv)
 			CloseRobot();
 		} else {
 			gameState = STATE_WAIT_KEYPRESS;
-			ShowDisplayInfo();
+			UpdateWinLoss();
+			UpdateGameState();
 			RefreshScreen();
 			while(getchar() != keyTable[KT_new])
 				;
