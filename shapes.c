@@ -176,16 +176,20 @@ void UpdateBag(int piece)
 	bag[0] = piece;
 }
 
-ExtFunc Shape *ChooseOption(ShapeOption *options)
+int Randomizer(void)
 {
 	int i, piece = 0;
 	for (i = 0; i < PIECE_TRIES; i++) {
 		piece = Random(0, 7);
-		if (BagContains(piece) == 0) {
-			UpdateBag(piece);
-			return options[piece].shape;
-		}
+		if (BagContains(piece) == 0)
+			return piece;
 	}
+	return piece;
+}
+
+ExtFunc Shape *ChooseOption(ShapeOption *options)
+{
+	int piece = Randomizer();
 	UpdateBag(piece);
 	return options[piece].shape;
 }

@@ -102,7 +102,7 @@ ExtFunc void OneGame(int scr, int scr2)
 	long pauseTimeLeft;
 	int pieceCount = 0;
 	int key;
-	int i;
+	int i , piece;
 	char *p, *cmd;
 
 	blockCount = 0;
@@ -118,9 +118,8 @@ ExtFunc void OneGame(int scr, int scr2)
 	}
 	ShowDisplayInfo();
 	SetITimer(speed, speed);
-	for (i = 0; i < BAG_SIZE; i++) {
-		bag[i] = -1;
-	}
+	for (i = 0; i < BAG_SIZE; i++)
+		UpdateBag(Randomizer());
 	if (robotEnable) {
 		RobotCmd(0, "GameType %s\n", gameNames[game]);
 		RobotCmd(0, "BoardSize 0 %d %d\n",
