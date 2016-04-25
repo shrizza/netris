@@ -74,7 +74,7 @@ typedef long netint4;
 
 #define MAX_BOARD_WIDTH		32
 #define MAX_BOARD_HEIGHT	64
-#define MAX_SCREENS			2
+#define MAX_SCREENS			3
 
 #define DEFAULT_INTERVAL	300000	/* Step-down interval in microseconds */
 
