@@ -153,17 +153,26 @@ ExtFunc void SRandom(int seed)
 	ctx = seed;
 }
 
-ExtFunc int Random(int min, int max1)
+ExtFunc int Random(int min, int max1, int peek)
 {
 	/* Taken from FreeBSD - http://svnweb.freebsd.org/base/head/lib/libc/stdlib/rand.c */
 	long hi, lo, x;
-	int rnd;
-	hi = ctx / 127773;
-	lo = ctx % 127773;
-	x = 16807 * lo - 2836 * hi;
-	if (x < 0)
-		x += 0x7fffffff;
-	ctx = x;
+	int rnd, i = peek;
+	unsigned long tctx = ctx;
+	do {
+		hi = tctx / 127773;
+		lo = tctx % 127773;
+		x = 16807 * lo - 2836 * hi;
+		if (x < 0)
+			x += 0x7fffffff;
+		if (peek == 0) {
+			ctx = x;
+			break;
+		} else {
+			tctx = x;
+		}
+		i--;
+	} while (i > 0);
 	rnd = x - 1;
 	return rnd % (max1 - min) + min;
 }

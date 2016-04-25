@@ -193,32 +193,38 @@ ExtFunc void OutputTermStr(char *str, int flush)
 	}
 }
 
-ExtFunc void InitScreen(int scr)
+ExtFunc void InitScreen(int scr, int border)
 {
 	int y, x;
 
-	if (scr == 0)
+	if (scr == 0) {
 		boardXPos[scr] = 1;
-	else
-		boardXPos[scr] = boardXPos[scr - 1] +
-					2 * boardWidth[scr - 1] + 3;
-	boardYPos[scr] = 22;
-	if (statusXPos < boardXPos[scr] + 2 * boardWidth[scr] + 3)
-		statusXPos = boardXPos[scr] + 2 * boardWidth[scr] + 3;
-	for (y = boardVisible[scr] - 1; y >= 0; --y) {
-		move(boardYPos[scr] - y, boardXPos[scr] - 1);
-		addch('|');
-		for (x = boardWidth[scr] - 1; x >= 0; --x)
-			addstr("  ");
-		move(boardYPos[scr] - y, boardXPos[scr] + 2 * boardWidth[scr]);
-		addch('|');
+		boardYPos[scr] = 22;
+	} else if (scr == 2) {
+		boardXPos[scr] = 23;
+		boardYPos[scr] = 4;
+	} else {
+		boardXPos[scr] = 59;
+		boardYPos[scr] = 22;
 	}
-	for (y = boardVisible[scr]; y >= -1; y -= boardVisible[scr] + 1) {
-		move(boardYPos[scr] - y, boardXPos[scr] - 1);
-		addch('+');
-		for (x = boardWidth[scr] - 1; x >= 0; --x)
-			addstr("--");
-		addch('+');
+	statusXPos = 23;
+	statusYPos = 22;
+	if (border == 1) {
+		for (y = boardVisible[scr] - 1; y >= 0; --y) {
+			move(boardYPos[scr] - y, boardXPos[scr] - 1);
+			addch('|');
+			for (x = boardWidth[scr] - 1; x >= 0; --x)
+				addstr("  ");
+			move(boardYPos[scr] - y, boardXPos[scr] + 2 * boardWidth[scr]);
+			addch('|');
+		}
+		for (y = boardVisible[scr]; y >= -1; y -= boardVisible[scr] + 1) {
+			move(boardYPos[scr] - y, boardXPos[scr] - 1);
+			addch('+');
+			for (x = boardWidth[scr] - 1; x >= 0; --x)
+				addstr("--");
+			addch('+');
+		}
 	}
 }
 
@@ -305,16 +311,14 @@ ExtFunc void UpdateRobot(void)
 		if (fairRobot)
 			addstr("Controlled by a fair robot");
 		else
-			addstr("Controlled by a robot");
-		clrtoeol();
+			addstr("Controlled by a robot     ");
 	}
 	if (opponentFlags & SCF_usingRobot) {
 		move(statusYPos - 6, statusXPos);
 		if (opponentFlags & SCF_fairRobot)
 			addstr("The opponent is a fair robot");
 		else
-			addstr("The opponent is a robot");
-		clrtoeol();
+			addstr("The opponent is a robot     ");
 	}
 }
 
@@ -328,14 +332,31 @@ ExtFunc void UpdateSeed(void)
 {
 	move(statusYPos - 12, statusXPos);
 	printw("Seed: %d", initSeed);
-	clrtoeol();
 }
 
 ExtFunc void UpdateSpeed(void)
 {
 	move(statusYPos - 11, statusXPos);
 	printw("Speed: %dms", speed / 1000);
+}
+
+ExtFunc void UpdatePreview(void)
+{
+	EraseShape(stdOptions[nextPiece1].shape, 2, 1, 1);
+	EraseShape(stdOptions[nextPiece2].shape, 2, 1, 5);
+	EraseShape(stdOptions[nextPiece3].shape, 2, 1, 10);
+	nextPiece1 = Randomizer(1);
+	nextPiece2 = Randomizer(2);
+	nextPiece3 = Randomizer(3);
+	PlotShape(stdOptions[nextPiece1].shape, 2, 1, 1, 0);
+	PlotShape(stdOptions[nextPiece2].shape, 2, 1, 5, 0);
+	PlotShape(stdOptions[nextPiece3].shape, 2, 1, 10, 0);
+	RefreshBoard(2);
+/*
+	move(statusYPos - 15, statusXPos);
+	printw("Next: %d", next);
 	clrtoeol();
+*/
 }
 
 ExtFunc void UpdateWinLoss(void)
@@ -349,15 +370,13 @@ ExtFunc void UpdateWinLoss(void)
 ExtFunc void UpdateCount(void)
 {
 	move(statusYPos - 9, statusXPos);
-	printw("Count: %d", blockCount);
-	clrtoeol();
+	printw("Count:    %d", blockCount);
 }
 
 ExtFunc void UpdateOpponentDisplay(void)
 {
 	move(1, 0);
 	printw("Playing %s@%s", opponentName, opponentHost);
-	clrtoeol();
 }
 
 ExtFunc void ShowPause(int pausedByMe, int pausedByThem)
@@ -366,12 +385,12 @@ ExtFunc void ShowPause(int pausedByMe, int pausedByThem)
 	if (pausedByThem)
 		addstr("Game paused by opponent");
 	else
-		clrtoeol();
+		addstr("                       ");
 	move(statusYPos - 2, statusXPos);
 	if (pausedByMe)
-		addstr("Game paused by you");
+		addstr("Game paused by you     ");
 	else
-		clrtoeol();
+		addstr("                       ");
 }
 
 ExtFunc void Message(char *s)

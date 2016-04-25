@@ -51,7 +51,26 @@ ExtFunc void InitBoard(int scr)
 	boardHeight[scr] = MAX_BOARD_HEIGHT;
 	boardVisible[scr] = 20;
 	boardWidth[scr] = 10;
-	InitScreen(scr);
+	InitScreen(scr, 1);
+}
+
+ExtFunc void InitPreview(int scr)
+{
+	int w,h;
+
+	for(h = 0 ; h < 4 ; h++)
+		for(w = 0 ; w < 14 ; w++) {
+			board[2][h][w] = 0;
+			oldBoard[2][h][w] = 0;
+			changed[2][h] = 0;
+			falling[2][w] = 0;
+			oldFalling[2][w] = 0;
+		}
+
+	boardHeight[scr] = 4;
+	boardVisible[scr] = 4;
+	boardWidth[scr] = 14;
+	InitScreen(scr, 0);
 }
 
 ExtFunc void CleanupBoard(int scr)

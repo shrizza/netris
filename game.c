@@ -93,7 +93,7 @@ ExtFunc int StartNewPiece(int scr, Shape *shape)
 	return 1;
 }
 
-ExtFunc void OneGame(int scr, int scr2)
+ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 {
 	MyEvent event;
 	int linesCleared, changed = 0;
@@ -110,6 +110,7 @@ ExtFunc void OneGame(int scr, int scr2)
 	speed = stepDownInterval;
 	ResetBaseTime();
 	InitBoard(scr);
+	InitPreview(scrpreview);
 	if (scr2 >= 0) {
 		spied = 1;
 		spying = 1;
@@ -119,7 +120,7 @@ ExtFunc void OneGame(int scr, int scr2)
 	ShowDisplayInfo();
 	SetITimer(speed, speed);
 	for (i = 0; i < BAG_SIZE; i++)
-		UpdateBag(Randomizer());
+		UpdateBag(Randomizer(0));
 	if (robotEnable) {
 		RobotCmd(0, "GameType %s\n", gameNames[game]);
 		RobotCmd(0, "BoardSize 0 %d %d\n",
@@ -289,7 +290,7 @@ ExtFunc void OneGame(int scr, int scr2)
 							short column;
 
 							memcpy(data, event.u.net.data, sizeof(data[0]));
-							column = Random(0, boardWidth[scr]);
+							column = Random(0, boardWidth[scr], 0);
 							data[1] = hton2(column);
 							InsertJunk(scr, ntoh2(data[0]), column);
 							if (spied)
@@ -587,11 +588,11 @@ ExtFunc int main(int argc, char **argv)
 					if (!isprint(opponentHost[i]))
 						opponentHost[i] = '?';
 			}
-			OneGame(0, 1);
+			OneGame(0, 1, 2);
 		}
 		else {
 			game = GT_onePlayer;
-			OneGame(0, -1);
+			OneGame(0, -1, 2);
 		}
 		if (wonLast) {
 			won++;
