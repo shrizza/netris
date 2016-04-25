@@ -91,8 +91,9 @@ typedef long netint4;
 #define EM_any				000777
 
 /* For the random piece generator */
-#define BAG_SIZE            4
-#define PIECE_TRIES         4
+#define BAG_SIZE			8
+#define HIST_BAG_SIZE		4
+#define PIECE_TRIES			4
 
 typedef enum _GameType { GT_onePlayer, GT_classicTwo, GT_len } GameType;
 typedef enum _BlockTypeA { BT_none, BT_white, BT_blue, BT_magenta,
@@ -190,7 +191,6 @@ extern char *version_string;
 EXT int myLinesCleared;
 EXT int enemyLinesCleared;
 EXT int blockCount;
-EXT int nextPiece1, nextPiece2, nextPiece3;
 EXT int myTotalLinesCleared;
 EXT int enemyTotalLinesCleared;
 

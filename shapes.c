@@ -159,7 +159,7 @@ ExtFunc				ShapeDrawFunc func, void *data)
 int BagContains(int piece)
 {
 	int i;
-	for (i = 0; i < BAG_SIZE; i++) {
+	for (i = 0; i < HIST_BAG_SIZE - 1; i++) {
 		if (bag[i] == piece) {
 			return 1;
 		}
@@ -170,17 +170,16 @@ int BagContains(int piece)
 void UpdateBag(int piece)
 {
 	int i;
-	for (i = 1; i < BAG_SIZE; i++) {
-		bag[i] = bag[i - 1];
-	}
-	bag[0] = piece;
+	for (i = 0; i < BAG_SIZE - 1; i++)
+		bag[i] = bag[i + 1];
+	bag[BAG_SIZE-1] = piece;
 }
 
-int Randomizer(int peek)
+int Randomizer(void)
 {
 	int i, piece = 0;
 	for (i = 0; i < PIECE_TRIES; i++) {
-		piece = Random(0, 7, peek);
+		piece = Random(0, 7);
 		if (BagContains(piece) == 0)
 			return piece;
 	}
@@ -189,10 +188,9 @@ int Randomizer(int peek)
 
 ExtFunc Shape *ChooseOption(ShapeOption *options)
 {
-	int piece = Randomizer(0);
-	UpdateBag(piece);
+	UpdateBag(Randomizer());
 	UpdatePreview();
-	return options[piece].shape;
+	return options[bag[4]].shape;
 }
 
 ExtFunc short ShapeToNetNum(Shape *shape)

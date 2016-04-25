@@ -342,21 +342,13 @@ ExtFunc void UpdateSpeed(void)
 
 ExtFunc void UpdatePreview(void)
 {
-	EraseShape(stdOptions[nextPiece1].shape, 2, 1, 1);
-	EraseShape(stdOptions[nextPiece2].shape, 2, 1, 5);
-	EraseShape(stdOptions[nextPiece3].shape, 2, 1, 10);
-	nextPiece1 = Randomizer(1);
-	nextPiece2 = Randomizer(2);
-	nextPiece3 = Randomizer(3);
-	PlotShape(stdOptions[nextPiece1].shape, 2, 1, 1, 0);
-	PlotShape(stdOptions[nextPiece2].shape, 2, 1, 5, 0);
-	PlotShape(stdOptions[nextPiece3].shape, 2, 1, 10, 0);
+	EraseShape(stdOptions[bag[4]].shape, 2, 1, 1);
+	EraseShape(stdOptions[bag[5]].shape, 2, 1, 5);
+	EraseShape(stdOptions[bag[6]].shape, 2, 1, 10);
+	PlotShape(stdOptions[bag[5]].shape, 2, 1, 1, 0);
+	PlotShape(stdOptions[bag[6]].shape, 2, 1, 5, 0);
+	PlotShape(stdOptions[bag[7]].shape, 2, 1, 10, 0);
 	RefreshBoard(2);
-/*
-	move(statusYPos - 15, statusXPos);
-	printw("Next: %d", next);
-	clrtoeol();
-*/
 }
 
 ExtFunc void UpdateWinLoss(void)

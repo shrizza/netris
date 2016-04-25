@@ -119,8 +119,8 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 	}
 	ShowDisplayInfo();
 	SetITimer(speed, speed);
-	for (i = 0; i < BAG_SIZE; i++)
-		UpdateBag(Randomizer(0));
+	for (i = 0; i < BAG_SIZE - 1; i++)
+		UpdateBag(Randomizer());
 	if (robotEnable) {
 		RobotCmd(0, "GameType %s\n", gameNames[game]);
 		RobotCmd(0, "BoardSize 0 %d %d\n",
@@ -290,7 +290,7 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 							short column;
 
 							memcpy(data, event.u.net.data, sizeof(data[0]));
-							column = Random(0, boardWidth[scr], 0);
+							column = Random(0, boardWidth[scr]);
 							data[1] = hton2(column);
 							InsertJunk(scr, ntoh2(data[0]), column);
 							if (spied)
