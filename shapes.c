@@ -159,7 +159,7 @@ ExtFunc				ShapeDrawFunc func, void *data)
 int BagContains(int piece)
 {
 	int i;
-	for (i = 0; i < HIST_BAG_SIZE - 1; i++) {
+	for (i = BAG_SIZE - 1 ; i > BAG_SIZE - HIST_BAG_SIZE - 1; i--) {
 		if (bag[i] == piece) {
 			return 1;
 		}
