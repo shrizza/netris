@@ -167,7 +167,7 @@ int BagContains(int piece)
 	return 0;
 }
 
-void UpdateBag(int piece)
+ExtFunc void UpdateBag(int piece)
 {
 	int i;
 	for (i = 0; i < BAG_SIZE - 1; i++)
@@ -175,7 +175,7 @@ void UpdateBag(int piece)
 	bag[BAG_SIZE-1] = piece;
 }
 
-int Randomizer(void)
+ExtFunc int Randomizer(void)
 {
 	int i, piece = 0;
 	for (i = 0; i < PIECE_TRIES; i++) {
