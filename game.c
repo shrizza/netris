@@ -492,6 +492,7 @@ ExtFunc int main(int argc, char **argv)
 				gameState = STATE_WAIT_CONNECTION;
 				ShowDisplayInfo();
 				RefreshScreen();
+				RefreshBoard(2);
 			}
 			if (initConn)
 				InitiateConnection(hostStr, portStr);

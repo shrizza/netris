@@ -342,13 +342,13 @@ ExtFunc void UpdateSpeed(void)
 
 ExtFunc void UpdatePreview(void)
 {
-	EraseShape(stdOptions[bag[4]].shape, 2, 1, 1);
-	EraseShape(stdOptions[bag[5]].shape, 2, 1, 5);
-	EraseShape(stdOptions[bag[6]].shape, 2, 1, 10);
 	PlotShape(stdOptions[bag[5]].shape, 2, 1, 1, 0);
 	PlotShape(stdOptions[bag[6]].shape, 2, 1, 5, 0);
 	PlotShape(stdOptions[bag[7]].shape, 2, 1, 10, 0);
 	RefreshBoard(2);
+	EraseShape(stdOptions[bag[5]].shape, 2, 1, 1);
+	EraseShape(stdOptions[bag[6]].shape, 2, 1, 5);
+	EraseShape(stdOptions[bag[7]].shape, 2, 1, 10);
 }
 
 ExtFunc void UpdateWinLoss(void)
