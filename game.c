@@ -27,6 +27,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <math.h>
 
 enum { KT_left, KT_full_left, KT_rotateCCW, KT_rotateCW, KT_right, KT_full_right, KT_drop, KT_down,
 	KT_toggleSpy, KT_pause, KT_faster, KT_redraw, KT_new, KT_numKeys };
@@ -35,7 +36,7 @@ static char *keyNames[KT_numKeys+1] = {
 	"Left", "FullLeft","RotateCCW", "RotateCW", "Right", "FullRight", "Drop", "Down", "ToggleSpy", "Pause",
 	"Faster", "Redraw", "New", NULL };
 
-static char *gameNames[GT_len] = { "OnePlayer", "ClassicTwo" };
+static char *gameNames[GT_len] = { "OnePlayer", "ClassicTwo", "TGM-1P" };
 
 static char keyTable[KT_numKeys+1];
 static int dropModeEnable = 0;
@@ -84,7 +85,7 @@ ExtFunc int StartNewPiece(int scr, Shape *shape)
 {
 	curShape[scr] = shape;
 	curY[scr] = boardVisible[scr] + 4;
-	curX[scr] = boardWidth[scr] / 2;
+	curX[scr] = boardWidth[scr] / 2 - (game == GT_TGM_1P ? 1 : 0);
 	while (!ShapeVisible(shape, scr, curY[scr], curX[scr]))
 		--curY[scr];
 	if (!ShapeFits(shape, scr, curY[scr], curX[scr]))
@@ -101,11 +102,17 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 	int oldPaused = 0, paused = 0, pausedByMe = 0, pausedByThem = 0;
 	long pauseTimeLeft;
 	int pieceCount = 0;
+	int countBlocks = 0;
 	int key;
 	int i , piece;
 	char *p, *cmd;
 
-	blockCount = 0;
+	level = 0;
+	sectionClear = 100;
+	for (i = 0; i < 4; i++)
+		counterClears[i] = 0;
+	counterBravo = counterRecovery = bestCombo = 0;
+	recoveryInProgress = comboInProgress = 0;
 	myLinesCleared = enemyLinesCleared = 0;
 	speed = stepDownInterval;
 	ResetBaseTime();
@@ -213,8 +220,13 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 								SendPacket(NP_rotateCW, 0, NULL);
 							break;
 						case KT_down:
-							if (MovePiece(scr, -1, 0) && spied)
-								SendPacket(NP_down, 0, NULL);
+							if (MovePiece(scr, -1, 0)) {
+								if (spied)
+									SendPacket(NP_down, 0, NULL);
+							} else {
+								if (game == GT_TGM_1P)
+									goto nextPiece; // lock
+							}
 							break;
 						case KT_toggleSpy:
 							spying = (!spying) && (scr2 >= 0);
@@ -383,10 +395,37 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 		FreezePiece(scr);
 		myLinesCleared += linesCleared = ClearFullLines(scr);
 		myTotalLinesCleared += linesCleared;
-		blockCount += 1 + linesCleared;
-		UpdateCount();
+		if (game == GT_TGM_1P && (linesCleared > 0 || (level + 1) % 100 != 0)) {
+			level += 1 + linesCleared;
+			sectionClear = (floor(level / 100) + 1) * 100;
+			UpdateLevel();
+		}
+		if (game == GT_TGM_1P) {
+			countBlocks = CountBlocks(scr);
+			if (countBlocks >= 150)
+				recoveryInProgress = 1;
+			if (!linesCleared)
+				comboInProgress = 0;
+		}
 		if (linesCleared) {
 			UpdateMyLinesCleared();
+			if (game == GT_TGM_1P) {
+				if (linesCleared > 1) {
+					comboInProgress++;
+					if (comboInProgress > bestCombo) {
+						bestCombo = comboInProgress;
+						UpdateMedalCO();
+					}
+				}
+				counterClears[linesCleared - 1]++;
+				if (CheckBravo(scr))
+					counterBravo++;
+				if (recoveryInProgress && countBlocks <= 70) {
+					counterRecovery++;
+					recoveryInProgress = 0;
+				}
+				UpdateMedals();
+			}
 			RefreshScreen();
 		}
 		if (linesCleared > 0 && spied)
@@ -409,6 +448,7 @@ gameOver:
 ExtFunc int main(int argc, char **argv)
 {
 	int initConn = 0, waitConn = 0, ch, done = 0;
+	game = GT_onePlayer;
 	char *hostStr = NULL, *portStr = NULL;
 	char *userName;
 	MyEvent event;
@@ -416,10 +456,13 @@ ExtFunc int main(int argc, char **argv)
 	standoutEnable = colorEnable = 1;
 	stepDownInterval = DEFAULT_INTERVAL;
 	MapKeys(DEFAULT_KEYS);
-	while ((ch = getopt(argc, argv, "u:hHRs:r:Fk:c:woDSCp:i:")) != -1)
+	while ((ch = getopt(argc, argv, "u:ghHRs:r:Fk:c:woDSCp:i:")) != -1)
 		switch (ch) {
 			case 'u':
 				userName = optarg;
+				break;
+			case 'g':
+				game = GT_TGM_1P;
 				break;
 			case 'c':
 				initConn = 1;
@@ -592,7 +635,6 @@ ExtFunc int main(int argc, char **argv)
 			OneGame(0, 1, 2);
 		}
 		else {
-			game = GT_onePlayer;
 			OneGame(0, -1, 2);
 		}
 		if (wonLast) {

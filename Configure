@@ -83,7 +83,7 @@ for lib in -lcurses -lncurses; do
 		LFLAGS="$lib"
 	fi
 done
-for lib in -lsocket -lnsl -ltermcap; do 
+for lib in -lsocket -lnsl -ltermcap -lm; do 
 	if $CC $CFLAGS $LEXTRA test.c $lib > /dev/null 2>&1; then
 		LFLAGS="$LFLAGS $lib"
 	fi

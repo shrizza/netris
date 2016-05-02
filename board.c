@@ -194,12 +194,23 @@ ExtFunc int MovePiece(int scr, int deltaY, int deltaX)
 
 ExtFunc int RotatePiece(int scr, int ccw)
 {
-	int result;
+	int result, result_l, result_r;
 
 	EraseShape(curShape[scr], scr, curY[scr], curX[scr]);
 	result = ShapeFits(ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW, scr, curY[scr], curX[scr]);
-	if (result)
-		curShape[scr] = ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW;
+	if (game == GT_TGM_1P) {
+			result_l = ShapeFits(ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW, scr, curY[scr], curX[scr] - 1);
+			result_r = ShapeFits(ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW, scr, curY[scr], curX[scr] + 1);
+			if (result || result_l || result_r)
+				curShape[scr] = ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW;
+			if (!result && result_l)
+				curX[scr]--;	// wallkick right
+			else if (!result && !result_l && result_r)
+				curX[scr]++;	// wallkick left
+	} else {
+			if (result)
+				curShape[scr] = ccw ? curShape[scr]->rotateToCCW : curShape[scr]->rotateToCW;
+	}
 	PlotShape(curShape[scr], scr, curY[scr], curX[scr], 1);
 	return result;
 }
@@ -225,6 +236,25 @@ ExtFunc int LineIsFull(int scr, int y)
 		if (GetBlock(scr, y, x) == BT_none)
 			return 0;
 	return 1;
+}
+
+ExtFunc int CheckBravo(int scr)
+{
+	int x;
+	for (x = 0; x < boardWidth[scr]; ++x)
+		if (GetBlock(scr, 0, x) != BT_none)
+			return 0;
+	return 1;
+}
+
+ExtFunc int CountBlocks(int scr)
+{
+	int x,y,c;
+	for (x = 0; x < boardWidth[scr]; ++x)
+		for (y = 0; y < boardHeight[scr]; ++y)
+			if (GetBlock(scr, y, x) != BT_none)
+				c++;
+	return c;
 }
 
 ExtFunc void CopyLine(int scr, int from, int to)

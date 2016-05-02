@@ -277,7 +277,7 @@ ExtFunc void ShowDisplayInfo(void)
 	UpdateGameState();
 	UpdateSeed();
 	UpdateSpeed();
-	UpdateCount();
+	UpdateLevel();
 	UpdateRobot();
 }
 
@@ -336,6 +336,8 @@ ExtFunc void UpdateSeed(void)
 
 ExtFunc void UpdateSpeed(void)
 {
+	if (game == GT_TGM_1P)
+		return;
 	move(statusYPos - 11, statusXPos);
 	printw("Speed: %dms", speed / 1000);
 }
@@ -343,26 +345,84 @@ ExtFunc void UpdateSpeed(void)
 ExtFunc void UpdatePreview(void)
 {
 	PlotShape(stdOptions[bag[5]].shape, 2, 1, 1, 0);
-	PlotShape(stdOptions[bag[6]].shape, 2, 1, 5, 0);
-	PlotShape(stdOptions[bag[7]].shape, 2, 1, 10, 0);
+	PlotShape(stdOptions[bag[6]].shape, 2, 1, 6, 0);
+	PlotShape(stdOptions[bag[7]].shape, 2, 1, 11, 0);
 	RefreshBoard(2);
 	EraseShape(stdOptions[bag[5]].shape, 2, 1, 1);
-	EraseShape(stdOptions[bag[6]].shape, 2, 1, 5);
-	EraseShape(stdOptions[bag[7]].shape, 2, 1, 10);
+	EraseShape(stdOptions[bag[6]].shape, 2, 1, 6);
+	EraseShape(stdOptions[bag[7]].shape, 2, 1, 11);
 }
 
 ExtFunc void UpdateWinLoss(void)
 {
+	if (game != GT_classicTwo)
+		return;
 	move(statusYPos - 3, statusXPos);
 	printw("Won:  %3d", won);
 	move(statusYPos - 2, statusXPos);
 	printw("Lost: %3d", lost);
 }
 
-ExtFunc void UpdateCount(void)
+ExtFunc void UpdateLevel(void)
 {
+	if (game != GT_TGM_1P)
+		return;
 	move(statusYPos - 9, statusXPos);
-	printw("Count:    %d", blockCount);
+	printw("Level:    %d / %d", level, sectionClear);
+}
+
+ExtFunc void UpdateMedals(void)
+{
+	if (game != GT_TGM_1P)
+		return;
+	UpdateMedalSK();
+	UpdateMedalAC();
+	UpdateMedalRE();
+	standend();
+}
+
+ExtFunc void UpdateMedalSK(void)
+{
+	if (counterClears[3] < 10)
+		return;
+	move(statusYPos - 8, statusXPos);
+	if (counterClears[3] >= 35)			attrset(COLOR_PAIR(BT_yellow));
+	else if (counterClears[3] >= 20)	attrset(COLOR_PAIR(BT_white));
+	else 								attrset(COLOR_PAIR(BT_red));
+	printw(" SK ");
+}
+
+ExtFunc void UpdateMedalAC(void)
+{
+	if (counterBravo < 1)
+		return;
+	move(statusYPos - 8, statusXPos + 5);
+	if (counterBravo >= 3)		attrset(COLOR_PAIR(BT_yellow));
+	else if (counterBravo >= 2)	attrset(COLOR_PAIR(BT_white));
+	else 						attrset(COLOR_PAIR(BT_red));
+	printw(" AC ");
+}
+
+ExtFunc void UpdateMedalRE(void)
+{
+	if (counterRecovery < 1)
+		return;
+	move(statusYPos - 8, statusXPos + 10);
+	if (counterRecovery >= 3)		attrset(COLOR_PAIR(BT_yellow));
+	else if (counterRecovery >= 2)	attrset(COLOR_PAIR(BT_white));
+	else 							attrset(COLOR_PAIR(BT_red));
+	printw(" RE ");
+}
+
+ExtFunc void UpdateMedalCO(void)
+{
+	if (bestCombo < 4)
+		return;
+	move(statusYPos - 8, statusXPos + 15);
+	if (bestCombo >= 7)			attrset(COLOR_PAIR(BT_yellow));
+	else if (bestCombo >= 5)	attrset(COLOR_PAIR(BT_white));
+	else 						attrset(COLOR_PAIR(BT_red));
+	printw(" CO ");
 }
 
 ExtFunc void UpdateOpponentDisplay(void)

@@ -95,7 +95,7 @@ typedef long netint4;
 #define HIST_BAG_SIZE		4
 #define PIECE_TRIES			4
 
-typedef enum _GameType { GT_onePlayer, GT_classicTwo, GT_len } GameType;
+typedef enum _GameType { GT_onePlayer, GT_classicTwo, GT_TGM_1P, GT_len } GameType;
 typedef enum _BlockTypeA { BT_none, BT_white, BT_blue, BT_magenta,
 							BT_cyan, BT_yellow, BT_green, BT_red,
 							BT_wall, BT_len } BlockTypeA;
@@ -190,9 +190,11 @@ extern char *version_string;
 
 EXT int myLinesCleared;
 EXT int enemyLinesCleared;
-EXT int blockCount;
+EXT int level, sectionClear;
 EXT int myTotalLinesCleared;
 EXT int enemyTotalLinesCleared;
+EXT int counterClears[4], counterBravo, counterRecovery, bestCombo;
+EXT int recoveryInProgress, comboInProgress;
 
 EXT int bag[BAG_SIZE];
 

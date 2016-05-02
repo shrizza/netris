@@ -75,10 +75,10 @@ ExtFunc void Usage(void)
 	  "  -p <port>	Set port number (default is %d)\n"
 	  "  -u <username> Set username displayed during multiplayer matches\n"
 	  "  -k <keys>	Remap keys.  The argument is a prefix of the string\n"
-	  "	  	containing the keys in order: left, full left, rotate-ccw, \n"
-	  "     rotate-cw, right, full right, drop, down-faster, \n"
-	  "     toggle-spying, pause, faster, redraw, new.\n"
-	  "     \"^\" prefixes controls.  (default is \"%s\")\n"
+	  "		  containing the keys in order: left, full left, rotate-ccw, \n"
+	  "		  rotate-cw, right, full right, drop, down-faster, \n"
+	  "		  toggle-spying, pause, faster, redraw, new.\n"
+	  "		  \"^\" prefixes controls.  (default is \"%s\")\n"
 	  "  -i <sec>	Set the step-down interval, in seconds\n"
 	  "  -r <robot>	Execute <robot> (a command) as a robot controlling\n"
 	  "		  the game instead of the keyboard\n"
@@ -89,6 +89,8 @@ ExtFunc void Usage(void)
 	  "		  another drop automatically\n"
 	  "  -S		Disable inverse/bold/color for slow terminals\n"
 	  "  -C		Disable color\n"
+	  "  -g		TGM mode (1P); levels/sections, ARS, medals,\n"
+	  "		  wallkick, hardlock\n"
 	  "  -H		Show distribution and warranty information\n"
 	  "  -R		Show rules\n",
 	  version_string, DEFAULT_PORT, DEFAULT_KEYS);

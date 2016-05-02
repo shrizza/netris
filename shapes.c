@@ -28,57 +28,78 @@
 #define PreDecl(name, dir) \
 	static Shape ShapeName(name, dir)
 
-#define StdShape(name, cmdName, mirror, type, realDir, dir, nextDirCCW, nextDirCW) \
+// The initY and initX here are TGM defaults
+// netris default is 0,0; this is properly accounted for in ShapeIterate()
+#define StdShape(name, cmdName, mirror, type, realDir, dir, initY, initX, nextDirCCW, nextDirCW) \
 	static Shape ShapeName(name, dir) = { \
 		&ShapeName(name, nextDirCCW), \
 		&ShapeName(name, nextDirCW), \
-		0, 0, mirror, D_ ## realDir, type, cmds_ ## cmdName }
+		initY, initX, mirror, D_ ## realDir, type, cmds_ ## cmdName }
 
-#define FourWayDecl(name, cmdName, mirror, type) \
+#define LTDecl(name, cmdName, mirror, type) \
 	PreDecl(name, down); \
 	PreDecl(name, up); \
 	PreDecl(name, right); \
-	StdShape(name, cmdName, mirror, type, left, left, down, up); \
-	StdShape(name, cmdName, mirror, type, up, up, left, right); \
-	StdShape(name, cmdName, mirror, type, right, right, up, down); \
-	StdShape(name, cmdName, mirror, type, down, down, right, left)
+	StdShape(name, cmdName, mirror, type, left, left, 0, 0, down, up); \
+	StdShape(name, cmdName, mirror, type, up, up, -1, 0, left, right); \
+	StdShape(name, cmdName, mirror, type, right, right, 0, 0, up, down); \
+	StdShape(name, cmdName, mirror, type, down, down, 0, 0, right, left)
 
-#define TwoWayDecl(name, cmdName, mirror, type) \
+#define JDecl(name, cmdName, mirror, type) \
+	PreDecl(name, down); \
+	PreDecl(name, up); \
+	PreDecl(name, right); \
+	StdShape(name, cmdName, mirror, type, left, left, 0, 0, down, up); \
+	StdShape(name, cmdName, mirror, type, up, up, 1, 0, left, right); \
+	StdShape(name, cmdName, mirror, type, right, right, 0, 0, up, down); \
+	StdShape(name, cmdName, mirror, type, down, down, 0, 0, right, left)
+
+#define IDecl(name, cmdName, mirror, type) \
 	PreDecl(name, vert); \
-	StdShape(name, cmdName, mirror, type, right, horiz, vert, vert); \
-	StdShape(name, cmdName, mirror, type, down, vert, horiz, horiz)
+	StdShape(name, cmdName, mirror, type, right, horiz, 0, 0, vert, vert); \
+	StdShape(name, cmdName, mirror, type, down, vert, 0, 1, horiz, horiz)
+
+#define SDecl(name, cmdName, mirror, type) \
+	PreDecl(name, vert); \
+	StdShape(name, cmdName, mirror, type, right, horiz, 0, 0, vert, vert); \
+	StdShape(name, cmdName, mirror, type, down, vert, 1, -1, horiz, horiz)
+
+#define ZDecl(name, cmdName, mirror, type) \
+	PreDecl(name, vert); \
+	StdShape(name, cmdName, mirror, type, right, horiz, 0, 0, vert, vert); \
+	StdShape(name, cmdName, mirror, type, down, vert, 0, -1, horiz, horiz)
 
 static Cmd cmds_long[] = { C_back, C_plot, C_forw, C_plot, C_forw, C_plot,
 	C_forw, C_plot, C_end };
-TwoWayDecl(long, long, 0, BT_blue);
+IDecl(long, long, 0, BT_blue);
 
 static Cmd cmds_square[] = { C_plot, C_forw, C_left, C_plot, C_forw, C_left,
 	C_plot, C_forw, C_left, C_plot, C_end };
-static Shape shape_square = { &shape_square, &shape_square, 0, 0, D_up, 0, BT_magenta,
+static Shape shape_square = { &shape_square, &shape_square, 0, -1, D_up, 0, BT_magenta,
 	cmds_square };
 
 static Cmd cmds_l[] = { C_right, C_back, C_plot, C_forw, C_plot, C_forw,
 	C_plot, C_left, C_forw, C_plot, C_end };
-FourWayDecl(l, l, 0, BT_cyan);
-FourWayDecl(l1, l, 1, BT_yellow);
+LTDecl(l, l, 0, BT_cyan);
+JDecl(j, l, 1, BT_yellow);
 
 static Cmd cmds_t[] = { C_plot, C_forw, C_plot, C_back, C_right, C_forw,
 	C_plot, C_back, C_back, C_plot, C_end };
-FourWayDecl(t, t, 0, BT_white);
+LTDecl(t, t, 0, BT_white);
 
 static Cmd cmds_s[] = { C_back, C_plot, C_forw, C_plot, C_left, C_forw,
 	C_plot, C_right, C_forw, C_plot, C_end };
-TwoWayDecl(s, s, 0, BT_green);
-TwoWayDecl(s1, s, 1, BT_red);
+SDecl(s, s, 0, BT_green);
+ZDecl(z, s, 1, BT_red);
 
 ShapeOption stdOptions[] = {
 	{1, &shape_long_horiz},
 	{1, &shape_square},
 	{1, &shape_l_down},
-	{1, &shape_l1_down},
+	{1, &shape_j_down},
 	{1, &shape_t_down},
 	{1, &shape_s_horiz},
-	{1, &shape_s1_horiz},
+	{1, &shape_z_horiz},
 	{0, NULL}};
 
 Shape *netMapping[] = {
@@ -89,18 +110,18 @@ Shape *netMapping[] = {
 	&shape_l_right,
 	&shape_l_up,
 	&shape_l_left,
-	&shape_l1_down,
-	&shape_l1_right,
-	&shape_l1_up,
-	&shape_l1_left,
+	&shape_j_down,
+	&shape_j_right,
+	&shape_j_up,
+	&shape_j_left,
 	&shape_t_down,
 	&shape_t_right,
 	&shape_t_up,
 	&shape_t_left,
 	&shape_s_horiz,
 	&shape_s_vert,
-	&shape_s1_horiz,
-	&shape_s1_vert,
+	&shape_z_horiz,
+	&shape_z_vert,
 	NULL};
 
 ExtFunc void MoveInDir(Dir dir, int dist, int *y, int *x)
@@ -127,8 +148,8 @@ ExtFunc				ShapeDrawFunc func, void *data)
 	Dir dir;
 	BlockType type;
 
-	y += s->initY;
-	x += s->initX;
+	y += game == GT_TGM_1P ? s->mirrored ? -s->initY : s->initY : 0;
+	x += game == GT_TGM_1P ? s->mirrored ? -s->initX : s->initX : 0;
 	dir = s->initDir;
 	type = falling ? -s->type : s->type;
 	mirror = s->mirrored ? -1 : 1;
