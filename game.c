@@ -106,15 +106,32 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 	int key;
 	int i , piece;
 	char *p, *cmd;
-
-	level = 0;
-	sectionClear = 100;
+	int TAPGravLvl[TAP_GRAV_LVL_SIZE + 1] = {
+		0, 30, 35, 40, 50, 60, 70, 80, 90,
+		100, 120, 140, 160, 170,
+		200, 220, 233, 236, 239, 243, 247, 251,
+		300, 330, 360, 400, 420, 450, 500 };
+	int TAPGrav[TAP_GRAV_LVL_SIZE + 1] = {
+		4, 6, 8, 10, 12, 16, 32, 48, 64,
+		80, 96, 112, 128, 144,
+		4, 32, 64, 96, 128, 160, 192, 224, 256,
+		512, 768, 1024, 1280, 1024, 768, 5120 };
+	int TAPLockLvl[TAP_LOCK_LVL_SIZE + 1] = { 0, 900 };
+	int TAPLock[TAP_LOCK_LVL_SIZE + 1] = { 30, 17 };
 	for (i = 0; i < 4; i++)
 		counterClears[i] = 0;
 	counterBravo = counterRecovery = bestCombo = 0;
 	recoveryInProgress = comboInProgress = 0;
 	myLinesCleared = enemyLinesCleared = 0;
 	speed = stepDownInterval;
+	if (game == GT_TGM_1P) {
+		level = 0;
+		sectionClear = 100;
+		curGravLvl = 0;
+		curLockLvl = 0;
+		lockDelay = TAPLockus();
+		speed = TAPGravus();
+	}
 	ResetBaseTime();
 	InitBoard(scr);
 	InitPreview(scrpreview);
@@ -167,9 +184,13 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 			CheckNetConn();
 			switch (WaitMyEvent(&event, EM_any)) {
 				case E_alarm:
-					if (!MovePiece(scr, -1, 0))
-						goto nextPiece;
-					else if (spied)
+					if (!MovePiece(scr, -1, 0)) {
+						if (game == GT_TGM_1P) {
+							if (lockDelayInProgress)
+								goto nextPiece;
+						} else
+							goto nextPiece;
+					} else if (spied)
 						SendPacket(NP_down, 0, NULL);
 					break;
 				case E_key:
@@ -406,6 +427,17 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 				recoveryInProgress = 1;
 			if (!linesCleared)
 				comboInProgress = 0;
+			if (curGravLvl < TAP_GRAV_LVL_SIZE && level >= TAPGravLvl[curGravLvl + 1]) {
+				curGravLvl++;
+				speed = TAPGravus();
+				UpdateSpeed();
+			}
+			if (curLockLvl < TAP_LOCK_LVL_SIZE && level >= TAPLockLvl[curLockLvl + 1]) {
+				curLockLvl++;
+				lockDelay = TAPLockus();
+			}
+			SetITimer(speed, speed);
+			lockDelayInProgress = 0;
 		}
 		if (linesCleared) {
 			UpdateMyLinesCleared();

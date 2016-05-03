@@ -95,6 +95,13 @@ typedef long netint4;
 #define HIST_BAG_SIZE		4
 #define PIECE_TRIES			4
 
+#define TAP_GRAV_LVL_SIZE	29
+#define TAP_LOCK_LVL_SIZE	6
+#define TAPfps				61.68
+#define TAPframeus			1000000 / TAPfps
+#define TAPGravus()		(long)floor((TAPframeus*(1/((double)TAPGrav[curGravLvl]/256))))
+#define TAPLockus()		(long)floor((double)1000000/TAPfps*TAPLock[curLockLvl])
+
 typedef enum _GameType { GT_onePlayer, GT_classicTwo, GT_TGM_1P, GT_len } GameType;
 typedef enum _BlockTypeA { BT_none, BT_white, BT_blue, BT_magenta,
 							BT_cyan, BT_yellow, BT_green, BT_red,
@@ -190,11 +197,14 @@ extern char *version_string;
 
 EXT int myLinesCleared;
 EXT int enemyLinesCleared;
-EXT int level, sectionClear;
 EXT int myTotalLinesCleared;
 EXT int enemyTotalLinesCleared;
+
+EXT int level, sectionClear;
 EXT int counterClears[4], counterBravo, counterRecovery, bestCombo;
 EXT int recoveryInProgress, comboInProgress;
+EXT int lockDelay, lockDelayInProgress;
+EXT int curGravLvl, curLockLvl;
 
 EXT int bag[BAG_SIZE];
 
