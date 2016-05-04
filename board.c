@@ -223,16 +223,12 @@ ExtFunc void CheckLockDelay(int scr)
 {
 	if (game != GT_TGM_1P)
 		return;
-	if (!lockDelayInProgress) {
-		if (!ShapeFits(curShape[scr], scr, curY[scr] - 1, curX[scr])) {
-			SetITimer(lockDelay, lockDelay);
-			lockDelayInProgress = 1;
-		}
-	} else {
-		if (ShapeFits(curShape[scr], scr, curY[scr] - 1, curX[scr])) {
-			SetITimer(speed, speed);
-			lockDelayInProgress = 0;
-		}
+	if (!lockDelayInProgress && !ShapeFits(curShape[scr], scr, curY[scr] - 1, curX[scr])) {
+		SetITimer(lockDelay, lockDelay);
+		lockDelayInProgress = 1;
+	} else if (lockDelayInProgress && ShapeFits(curShape[scr], scr, curY[scr] - 1, curX[scr])) {
+		SetITimer(speed, speed);
+		lockDelayInProgress = 0;
 	}
 }
 
@@ -244,6 +240,8 @@ ExtFunc int DropPiece(int scr)
 	while (ShapeFits(curShape[scr], scr, curY[scr] - 1, curX[scr])) {
 		--curY[scr];
 		++count;
+		if (game == GT_TGM_1P)
+			CheckLockDelay(scr);
 	}
 	PlotShape(curShape[scr], scr, curY[scr], curX[scr], 1);
 	return count;

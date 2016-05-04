@@ -256,7 +256,8 @@ ExtFunc void OneGame(int scr, int scr2, int scrpreview)
 							if (DropPiece(scr) > 0) {
 								if (spied)
 									SendPacket(NP_drop, 0, NULL);
-								SetITimer(speed, speed);
+								if (game != GT_TGM_1P)
+									SetITimer(speed, speed);
 							}
 							dropMode = dropModeEnable;
 							break;
